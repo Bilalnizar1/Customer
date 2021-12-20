@@ -22,23 +22,43 @@ class Customer {
     }
 }
 public class Menu {
-        public static void main(String[] args) {
-            String jdbcUrl="jdbc:sqlite:/C:\\Users\\bilal\\OneDrive\\Desktop\\SQL\\sqlite-tools-win32-x86-3370000\\Customer.db";
+        public static void main(String[] args) throws ClassNotFoundException {
+            Class.forName("org.sqlite.JDBC");
+            String jdbcUrl="jdbc:sqlite:Customer.db";
 
             try {
                 Connection connection= DriverManager.getConnection(jdbcUrl);
-                String sql="SELECT * FROM Customer";
-                Statement statement=connection.createStatement();
-                ResultSet result=statement.executeQuery(sql);
-                while (result.next()){
-                    int customerid= result.getInt("Customerid");
-                    String customername= result.getString("CustomerName");
-                    System.out.println(customerid + "|" + customername);
+                if(connection!=null){
+                    DatabaseMetaData meta=connection.getMetaData();
+                    System.out.println("Tha driver name is" +meta.getDriverName());
+                    System.out.println("Database Has been Created");
+                }}
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+            try {
+                Class.forName("org.sqlite.JDBC");
+                Connection conn = DriverManager.getConnection(jdbcUrl);
+                System.out.println("Database opened sucessfully");
+                Statement stmt = conn.createStatement();
+                String sql=" CREATE TABLE CUSTOMERS " +
+                            " (CustomerID INT PRIMARY KEY " +
+                        " CustomerName TEXT) ";
 
+                stmt.executeUpdate(sql);
+                stmt.close();
 
+            }
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
+            try {
+                Connection conn = DriverManager.getConnection(jdbcUrl);
+                Statement statement=conn.createStatement();
 
                 }
-            } catch (SQLException e){
+             catch (SQLException e){
                 System.out.println("Error Connecting Database");
                 e.printStackTrace();
             }
@@ -58,26 +78,26 @@ public class Menu {
                 displayMenu();
                 option = sc.nextInt();
                 if(option == 1) {
-                    System.out.print("Enter the Customer's id: "); //prompt for an input
-                    int id = sc.nextInt(); //stores an employee's id
+                    System.out.print("Enter the Customer's id: ");
+                    int CustomerID = sc.nextInt();
                     sc.nextLine();
-                    System.out.print("Enter the Customer's name: "); //prompt user for input
-                    String name = sc.nextLine(); //stores an employee's name
-                    Customer newCustomer = new Customer(name, id); //creating an Employee object with id name salary
+                    System.out.print("Enter the Customer's name: ");
+                    String CustomerName = sc.nextLine();
+                    Customer newCustomer = new Customer(CustomerName,CustomerID);
 
                     Customer[] temp = new Customer[customer.length + 1];
                     for(int i=0; i<temp.length-1; i++) {
-                        temp[i] = customer[i]; //pass each element in employees array to the temp array
+                        temp[i] = customer[i];
                     }
-                    temp[temp.length-1] = newCustomer; //add the created employee object to the array
-                    customer = temp.clone(); //pass the temp array to the employees array
+                    temp[temp.length-1] = newCustomer;
+                    customer = temp.clone();
                 }else if(option == 2) {
                     for(Customer emp: customer) {
                         System.out.println(emp.toString());
                     }
                 }else if(option == 3) {
-                    System.out.print("Enter the employee's id: "); //prompt for input
-                    int id = sc.nextInt(); //gets an employee's id
+                    System.out.print("Enter the Customer's id: ");
+                    int id = sc.nextInt();
                     int i = 0;
                     boolean exists = false;
                     for(i=0; i<customer.length; i++) {
@@ -87,9 +107,9 @@ public class Menu {
                         }
                     }
                     if(exists) {
-                        System.out.println("Employee's Data: " + customer[i].toString());
+                        System.out.println("Customer's Data: " + customer[i].toString());
                     }else {
-                        System.out.println("Employee not found.");
+                        System.out.println("Customer not found.");
                     }
                 }
                 else if(option == 4) {
