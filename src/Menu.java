@@ -42,26 +42,41 @@ public class Menu {
                 System.out.println("Database opened sucessfully");
                 Statement stmt = conn.createStatement();
                 String sql=" CREATE TABLE CUSTOMERS " +
-                            " (CustomerID INT PRIMARY KEY " +
+                            " (CustomerID INT PRIMARY KEY ," +
                         " CustomerName TEXT) ";
+                System.out.println("Table Created");
 
                 stmt.executeUpdate(sql);
                 stmt.close();
 
             }
-            catch (Exception e){
+            catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
             try {
                 Connection conn = DriverManager.getConnection(jdbcUrl);
-                Statement statement=conn.createStatement();
+                Statement stmt = conn.createStatement();
+                Class.forName("org.sqlite.JDBC");
+                String sql = " INSERT INTO CUSTOMERS (CustomerID,CustomerName)" +
+                        "VALUES (?,?)";
+                stmt.executeUpdate(sql);
+                stmt.close();
+            }
+            catch (Exception e){
+                System.out.println(e.getMessage());
+
+            }
+            try {
+                Connection conn = DriverManager.getConnection(jdbcUrl);
+                Statement stmt=conn.createStatement();
+                Class.forName("org.sqlite.JDBC");
 
                 }
              catch (SQLException e){
                 System.out.println("Error Connecting Database");
                 e.printStackTrace();
             }
+
 
 
 
@@ -116,6 +131,8 @@ public class Menu {
                 }
             }
         }
+
+
         public static void displayMenu() {
             System.out.println("***-----Menu-----***:" +
                     "\n [1] Add new Customer"
