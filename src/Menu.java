@@ -93,8 +93,15 @@ public class Menu {
 
                         }
                     } else if (option == 3) {
+                        try(Statement stmt=connection.createStatement()) {
+                            Class.forName("org.sqlite.JDBC");
                         System.out.println("Enter the Customer id: ");
                         int id = sc.nextInt();
+                        String sql="SELECT CustomerName FROM CUSTOMERSDATA";
+                        ResultSet rs=stmt.executeQuery(sql);
+                        while (rs.next()){
+                            System.out.println((rs.getInt(1)+ "-" + rs.getString(1)));
+                        }}
 
                     }
                 }
