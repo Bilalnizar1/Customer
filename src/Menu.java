@@ -1,3 +1,5 @@
+import java.io.InputStream;
+import java.sql.PreparedStatement;
 import java.sql.*;
 import java.util.Scanner;
 class Customer {
@@ -7,6 +9,9 @@ class Customer {
     public Customer(String name, int id) {
         this.name = name;
         this.id = id;
+    }
+
+    public Customer() {
     }
 
     public String getName() {
@@ -22,7 +27,10 @@ class Customer {
     }
 }
 public class Menu {
-        public static void main(String[] args) throws ClassNotFoundException {
+    private static int CustomerID;
+    private static String CustomerName;
+
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
             Class.forName("org.sqlite.JDBC");
             String jdbcUrl="jdbc:sqlite:Customer.db";
 
@@ -36,40 +44,50 @@ public class Menu {
             catch (Exception e){
                 System.out.println(e.getMessage());
             }
+        Class.forName("org.sqlite.JDBC");
+        Connection conn = DriverManager.getConnection(jdbcUrl);
             try {
-                Class.forName("org.sqlite.JDBC");
-                Connection conn = DriverManager.getConnection(jdbcUrl);
                 System.out.println("Database opened sucessfully");
                 Statement stmt = conn.createStatement();
-                String sql=" CREATE TABLE CUSTOMERS " +
-                            " (CustomerID INT PRIMARY KEY ," +
-                        " CustomerName TEXT) ";
+                String sql=" CREATE TABLE CUSTOMERSDATA " +
+                            " (CustomerID INT(20) PRIMARY KEY ," +
+                        " CustomerName TEXT(30)) ";
                 System.out.println("Table Created");
 
                 stmt.executeUpdate(sql);
-                stmt.close();
+
 
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());
             }
             try {
-                Connection conn = DriverManager.getConnection(jdbcUrl);
-                Statement stmt = conn.createStatement();
-                Class.forName("org.sqlite.JDBC");
-                String sql = " INSERT INTO CUSTOMERS (CustomerID,CustomerName)" +
+                String sql = " INSERT INTO CUSTOMERSDATA" + " (CustomerID, " + " CustomerName)" +
                         "VALUES (?,?)";
+                PreparedStatement stmt=conn.prepareStatement(sql);
+                stmt.setInt(1,CustomerID);
+                stmt.setString(2,CustomerName);
                 stmt.executeUpdate(sql);
-                stmt.close();
+
             }
             catch (Exception e){
                 System.out.println(e.getMessage());
 
             }
-            try {
-                Connection conn = DriverManager.getConnection(jdbcUrl);
+            try{
                 Statement stmt=conn.createStatement();
                 Class.forName("org.sqlite.JDBC");
+                String sql="SELECT* FROM CUSTOMERSDATA";
+                ResultSet rs=stmt.executeQuery(sql);
+                while (rs.next()) {
+                    System.out.println(rs.getInt(CustomerID) + "\t" + rs.getString(CustomerName));
+                }
+            }
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+            try {
+                Statement stmt=conn.createStatement();
 
                 }
              catch (SQLException e){
@@ -86,6 +104,7 @@ public class Menu {
 
 
 
+            Customer app=new Customer();
             Scanner sc = new Scanner(System.in);
             Customer[] customer = {};
             int option = 0;
@@ -94,11 +113,13 @@ public class Menu {
                 option = sc.nextInt();
                 if(option == 1) {
                     System.out.print("Enter the Customer's id: ");
+
                     int CustomerID = sc.nextInt();
                     sc.nextLine();
+
                     System.out.print("Enter the Customer's name: ");
                     String CustomerName = sc.nextLine();
-                    Customer newCustomer = new Customer(CustomerName,CustomerID);
+                    Customer newCustomer = new Customer(CustomerName, CustomerID);
 
                     Customer[] temp = new Customer[customer.length + 1];
                     for(int i=0; i<temp.length-1; i++) {
@@ -141,6 +162,7 @@ public class Menu {
                     + "\n [4] Exit"
                     + "\n \n Enter your choice: ");
         }
+
 
 
 
